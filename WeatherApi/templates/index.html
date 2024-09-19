@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: fadeIn 1s ease-out;
+        }
+        #cityInput {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+        #cityInput:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            width: 280px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        #weatherInfo {
+            background-color: rgba(255,255,255,0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            animation: slideUp 0.5s ease-out;
+        }
+        .forecast {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .forecast-item {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .forecast-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        #temperatureChart {
+            margin-top: 20px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather App</h1>
+    <div>
+        <input type="text" id="cityInput" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather</button>
+    </div>
+    <div id="weatherInfo"></div>
+    <canvas id="temperatureChart"></canvas>
+
+    <script>
+        let chart;
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value;
+            try {
+                const response = await axios.get(`/api/weather?city=${city}&days=5`);
+                const weatherData = response.data;
+                let weatherInfo = `<h2>Weather in ${weatherData.city.name}, ${weatherData.city.country}</h2>`;
+                weatherInfo += '<div class="forecast">';
+                
+                const labels = [];
+                const temperatures = [];
+
+                weatherData.list.forEach((forecast, index) => {
+                    if (index % 8 === 0) { // Display data for every 24 hours
+                        const date = new Date(forecast.dt * 1000);
+                        labels.push(date.toLocaleDateString());
+                        temperatures.push(forecast.main.temp);
+                        weatherInfo += `
+                            <div class="forecast-item">
+                                <h3>${date.toLocaleDateString()}</h3>
+                                <p>${forecast.main.temp}°C</p>
+                                <p>${forecast.weather[0].description}</p>
+                                <p>Humidity: ${forecast.main.humidity}%</p>
+                            </div>
+                        `;
+                    }
+                });
+
+                weatherInfo += '</div>';
+                document.getElementById('weatherInfo').innerHTML = weatherInfo;
+
+                // Create or update chart
+                if (chart) {
+                    chart.destroy();
+                }
+                chart = new Chart(document.getElementById('temperatureChart'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Temperature (°C)',
+                            data: temperatures,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        animations: {
+                            tension: {
+                                duration: 1000,
+                                easing: 'linear',
+                                from: 1,
+                                to: 0,
+                                loop: true
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('weatherInfo').innerHTML = `An error occurred: ${error.message}. Please try again.`;
+            }
+        }
+    </script>
+</body>
+</html>

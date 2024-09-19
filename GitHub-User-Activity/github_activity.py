@@ -210,12 +210,16 @@ async def interactive_mode():
                     elif args[i] == "--diff":
                         include_diff = True
 
+                click.echo(f"\nFetching activity for {username}...")
                 await fetch_and_display_activity(http_session, username, repo, limit, event_type, output_format, include_diff)
+                click.echo("\n")  # Add a newline for better readability between commands
 
             except KeyboardInterrupt:
                 continue
             except EOFError:
                 break
+            except Exception as e:
+                click.echo(f"An error occurred: {str(e)}")
 
 @click.command()
 @click.argument("username", required=False)

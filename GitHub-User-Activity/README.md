@@ -86,9 +86,9 @@ The basic syntax for using the CLI is:
 
 ## Interactive Mode
 
-In interactive mode, you can query multiple users or repositories without restarting the script. Use the same options as in the command-line mode, separated by spaces.
+In interactive mode, you can query multiple users or repositories without restarting the script. Use the same options as in the command-line mode, but enter them as a single line command.
 
-Example commands in interactive mode:
+To start interactive mode:
 
 ```
 octocat

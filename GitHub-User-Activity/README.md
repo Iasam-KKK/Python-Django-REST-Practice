@@ -49,6 +49,11 @@ The basic syntax for using the CLI is:
 
 ### Examples
 
+Sample Usage:
+```
+python github_activity.py <username>
+```
+
 1. Fetch the last 10 events for a user:
 
    ```

@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "description": "Buy groceries",
+    "status": "done",
+    "createdAt": "2023-04-15T10:30:00",
+    "updatedAt": "2024-09-19T11:17:26.040852"
+  },
+  {
+    "id": 2,
+    "description": "Finish project report",
+    "status": "in-progress",
+    "createdAt": "2023-04-14T09:15:00",
+    "updatedAt": "2023-04-15T11:45:00"
+  },
+  {
+    "id": 3,
+    "description": "Call mom",
+    "status": "done",
+    "createdAt": "2023-04-13T18:00:00",
+    "updatedAt": "2023-04-14T19:30:00"
+  }
+]
